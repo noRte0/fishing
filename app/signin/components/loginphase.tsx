@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import arrleft from "../assets/arr-left.svg";
 import organ from "../assets/orga-icon.png";
 import git from "../assets/git-icon.svg";
@@ -16,6 +17,7 @@ interface LoginPhaseProps {
 }
 
 export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -137,7 +139,7 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
             <div className="flex justify-end gap-1 mt-6">
               <button
                 type="button"
-                onClick={() => setPhase("email")}
+                onClick={() => router.back()}
                 className="w-27 h-8 text-[15px] font-normal text-[#1b1b1b] bg-[#00000033] transition duration-200 py-1 px-3 cursor-pointer hover:bg-[#0000004d]"
               >
                 Back
