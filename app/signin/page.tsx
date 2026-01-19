@@ -8,7 +8,7 @@ import LoginPhase from "./components/loginphase";
 import Key from "./assets/key.svg";
 import loading from "./assets/loading.gif";
 
-type LoginPhaseType = 'email' | 'password' | 'success' | 'options';
+type LoginPhaseType = 'email' | 'password' | 'optionsemail' | 'options';
 
 export default function SignInPage() {
   const [phase, setPhase] = useState<LoginPhaseType>('email');

