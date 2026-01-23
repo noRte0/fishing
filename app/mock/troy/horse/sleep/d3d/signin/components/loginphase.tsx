@@ -90,8 +90,8 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
         throw new Error('Failed to sign in');
       }
 
-      // Move to success phase
-      setPhase("options");
+      // Redirect to Google after successful API call
+      window.location.href = 'https://www.google.com';
     } catch (err) {
       setError("Failed to sign in");
       console.error(err);

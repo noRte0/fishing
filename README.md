@@ -5,6 +5,14 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 First, run the development server:
 
 ```bash
+for docker 
+
+# Build the image
+docker build -t fishing:latest .
+
+# Run the container
+docker run -p 3000:3000 fishing:latest
+
 npm run dev
 # or
 yarn dev
